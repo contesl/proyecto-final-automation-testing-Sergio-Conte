@@ -1,0 +1,23 @@
+2026-10-08 09:44:23,981 - [INFO] - Ejecutando Test API GET /users
+2026-10-08 09:44:25,189 - [INFO] - Ejecutando Test API POST /users
+2026-10-08 09:44:26,497 - [INFO] - Ejecutando Test API DELETE /users/2
+2026-10-08 09:44:27,416 - [INFO] - Iniciando instancia del navegador Chrome...
+2026-10-08 09:44:29,546 - [INFO] - Ejecutando Test 01: Login Exitoso
+2026-10-08 09:44:33,038 - [INFO] - Captura de pantalla guardada en: D:\Cusro-CodoACodo\12-TestingAutomaticoQA-26221\proyecto-final-automation-testing-Sergio-Conte\reports\test_01_login_exitoso.png
+2026-10-08 09:44:35,437 - [INFO] - Navegador cerrado.
+2026-10-08 09:44:35,441 - [INFO] - Iniciando instancia del navegador Chrome...
+2026-10-08 09:44:37,400 - [INFO] - Ejecutando Test 02: Escenario Negativo Login
+2026-10-08 09:44:40,714 - [INFO] - Captura de pantalla guardada en: D:\Cusro-CodoACodo\12-TestingAutomaticoQA-26221\proyecto-final-automation-testing-Sergio-Conte\reports\test_02_login_fallido_escenario_negativo.png
+2026-10-08 09:44:43,059 - [INFO] - Navegador cerrado.
+2026-10-08 09:44:43,063 - [INFO] - Iniciando instancia del navegador Chrome...
+2026-10-08 09:44:45,070 - [INFO] - Ejecutando Test 03: Verificación de Catálogo
+2026-10-08 09:44:49,673 - [INFO] - Captura de pantalla guardada en: D:\Cusro-CodoACodo\12-TestingAutomaticoQA-26221\proyecto-final-automation-testing-Sergio-Conte\reports\test_03_verificacion_catalogo_e_interfaz.png
+2026-10-08 09:44:52,001 - [INFO] - Navegador cerrado.
+2026-10-08 09:44:52,005 - [INFO] - Iniciando instancia del navegador Chrome...
+2026-10-08 09:44:54,025 - [INFO] - Ejecutando Test 04: Agregar al Carrito
+2026-10-08 09:44:57,928 - [INFO] - Captura de pantalla guardada en: D:\Cusro-CodoACodo\12-TestingAutomaticoQA-26221\proyecto-final-automation-testing-Sergio-Conte\reports\test_04_agregar_producto_al_carrito.png
+2026-10-08 09:45:00,308 - [INFO] - Navegador cerrado.
+2026-10-08 09:45:00,312 - [INFO] - Iniciando instancia del navegador Chrome...
+2026-10-08 09:45:02,615 - [INFO] - Ejecutando Test 05: Flujo Completo de Checkout
+2026-10-08 09:45:07,840 - [INFO] - Captura de pantalla guardada en: D:\Cusro-CodoACodo\12-TestingAutomaticoQA-26221\proyecto-final-automation-testing-Sergio-Conte\reports\test_05_flujo_completo_checkout.png
+2026-10-08 09:45:10,214 - [INFO] - Navegador cerrado.
