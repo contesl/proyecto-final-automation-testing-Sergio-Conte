@@ -6,7 +6,7 @@ class BasePage:
     Clase Base que encapsula todos los métodos genéricos de Selenium WebDriver.
     Aplica el principio de reusabilidad y manejo centralizado de esperas explícitas.
     """
-    def __init__(self, driver, timeout=10):
+    def __init__(self, driver, timeout=30):
         # Asigna la instancia del navegador y configura una espera explícita predeterminada
         self.driver = driver
         self.wait = WebDriverWait(driver, timeout)
