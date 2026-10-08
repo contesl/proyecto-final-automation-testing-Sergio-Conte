@@ -15,6 +15,9 @@ class InventoryPage(BasePage):
     CART_LINK = (By.CLASS_NAME, "shopping_cart_link")
     MENU_BUTTON = (By.ID, "react-burger-menu-btn")
     SORT_CONTAINER = (By.CLASS_NAME, "product_sort_container")
+    # Localizador del botón Checkout, utilizado para verificar que la página
+    # del carrito cargó correctamente antes de continuar
+    CHECKOUT_BUTTON = (By.ID, "checkout")
 
     def get_title(self):
         """Retorna el título principal de la sección (ej. 'Products')."""
@@ -39,8 +42,14 @@ class InventoryPage(BasePage):
         return self.get_text(self.CART_BADGE)
 
     def go_to_cart(self):
-        """Navega hacia la vista del carrito haciendo clic en el ícono del carrito."""
+        """
+        Navega hacia la vista del carrito haciendo clic en el ícono del carrito.
+        Incluye una espera explícita a que el botón Checkout sea visible, confirmando
+        que la página del carrito cargó completamente antes de continuar.
+        """
         self.click(self.CART_LINK)
+        # Espera a que el botón Checkout esté visible como confirmación de carga de la página
+        self.wait.until(EC.visibility_of_element_located(self.CHECKOUT_BUTTON))
 
     def is_interface_loaded(self):
         """Verifica la correcta carga de la interfaz verificando componentes clave."""
