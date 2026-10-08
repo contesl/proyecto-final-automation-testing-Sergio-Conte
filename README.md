@@ -11,6 +11,7 @@ Framework de automatización de pruebas híbrido desarrollado en Python, diseña
 - **Patrón de Diseño:** Page Object Model (POM)
 - **Gestión de Reportes:** Pytest HTML Reports
 - **Control de Versiones:** Git y GitHub
+- **CI/CD:** GitHub Actions
 
 ## 📂 Estructura del Proyecto
 
@@ -31,6 +32,9 @@ proyecto-final-automation-testing-Sergio-Conte/
 ├── utils/                  # Archivos de configuración y datos externos
 │   └── usuarios.json       # Datos de prueba parametrizados (Credenciales, Checkout)
 │
+├── .github/
+│   └── workflows/
+│       └── tests.yml       # Pipeline de CI/CD con GitHub Actions
 ├── reports/                # Directorio de salida para capturas de pantalla y reportes HTML
 ├── conftest.py             # Fixtures globales (inicialización de drivers y hooks de fallos)
 ├── requirements.txt        # Dependencias del proyecto
@@ -111,6 +115,25 @@ Los datos de prueba se gestionan desde `utils/usuarios.json`, separando la lógi
 ```
 
 Para agregar nuevos conjuntos de datos, basta con extender el archivo JSON sin modificar el código de los tests.
+
+## ⚡ Integración Continua con GitHub Actions
+
+El proyecto incluye un pipeline de CI/CD configurado en `.github/workflows/tests.yml` que se ejecuta automáticamente en cada `push` o `pull request` a la rama `main`.
+
+**¿Qué hace el pipeline?**
+
+1. Levanta una máquina virtual Ubuntu limpia
+2. Instala Python 3.13 y las dependencias del proyecto (con cache para mayor velocidad)
+3. Ejecuta las pruebas de API
+4. Ejecuta las pruebas de UI en modo headless (sin ventana gráfica)
+5. Sube los reportes HTML y capturas de pantalla como artefactos descargables
+
+**¿Cómo ver los resultados?**
+
+1. Ingresá al repositorio en GitHub
+2. Hacé click en la tab **Actions**
+3. Seleccioná la ejecución más reciente
+4. Los reportes están disponibles en la sección **Artifacts** al final de la página, disponibles por 30 días
 
 ## 📊 ¿Cómo interpretar los reportes generados?
 
