@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 
 class InventoryPage(BasePage):
@@ -24,8 +25,14 @@ class InventoryPage(BasePage):
         return self.get_text(self.FIRST_ITEM_NAME), self.get_text(self.FIRST_ITEM_PRICE)
 
     def add_first_product_to_cart(self):
-        """Hace clic en el botón 'Add to Cart' del primer producto del catálogo."""
+        """
+        Hace clic en el botón 'Add to Cart' del primer producto del catálogo.
+        Incluye una espera explícita a que el badge del carrito sea visible antes de
+        continuar, evitando condiciones de carrera en entornos de CI/CD.
+        """
         self.click(self.FIRST_ADD_TO_CART_BTN)
+        # Espera a que el badge rojo del carrito aparezca como confirmación de la acción
+        self.wait.until(EC.visibility_of_element_located(self.CART_BADGE))
 
     def get_cart_badge_count(self):
         """Obtiene la cantidad de ítems reflejada en la insignia roja del carrito."""
