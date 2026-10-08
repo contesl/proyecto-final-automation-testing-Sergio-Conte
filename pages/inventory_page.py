@@ -15,9 +15,6 @@ class InventoryPage(BasePage):
     CART_LINK = (By.CLASS_NAME, "shopping_cart_link")
     MENU_BUTTON = (By.ID, "react-burger-menu-btn")
     SORT_CONTAINER = (By.CLASS_NAME, "product_sort_container")
-    # Localizador del botón Checkout, utilizado para verificar que la página
-    # del carrito cargó correctamente antes de continuar
-    CHECKOUT_BUTTON = (By.ID, "checkout")
 
     def get_title(self):
         """Retorna el título principal de la sección (ej. 'Products')."""
@@ -30,12 +27,12 @@ class InventoryPage(BasePage):
     def add_first_product_to_cart(self):
         """
         Hace clic en el botón 'Add to Cart' del primer producto del catálogo.
-        Incluye una espera explícita a que el badge del carrito sea visible antes de
-        continuar, evitando condiciones de carrera en entornos de CI/CD.
+        Espera a que el badge del carrito esté presente en el DOM como confirmación
+        de que la acción se registró, sin depender de visibilidad de renderizado.
         """
         self.click(self.FIRST_ADD_TO_CART_BTN)
-        # Espera a que el badge rojo del carrito aparezca como confirmación de la acción
-        self.wait.until(EC.visibility_of_element_located(self.CART_BADGE))
+        # Usa presence_of_element_located (más confiable que visibility en apps React)
+        self.wait.until(EC.presence_of_element_located(self.CART_BADGE))
 
     def get_cart_badge_count(self):
         """Obtiene la cantidad de ítems reflejada en la insignia roja del carrito."""
@@ -44,12 +41,12 @@ class InventoryPage(BasePage):
     def go_to_cart(self):
         """
         Navega hacia la vista del carrito haciendo clic en el ícono del carrito.
-        Incluye una espera explícita a que el botón Checkout sea visible, confirmando
-        que la página del carrito cargó completamente antes de continuar.
+        Verifica la navegación mediante la URL resultante, que es más confiable
+        que esperar visibilidad de elementos en apps React en entornos de CI/CD.
         """
         self.click(self.CART_LINK)
-        # Espera a que el botón Checkout esté visible como confirmación de carga de la página
-        self.wait.until(EC.visibility_of_element_located(self.CHECKOUT_BUTTON))
+        # Confirma la navegación por URL en lugar de visibilidad de elementos
+        self.wait.until(EC.url_contains("cart.html"))
 
     def is_interface_loaded(self):
         """Verifica la correcta carga de la interfaz verificando componentes clave."""

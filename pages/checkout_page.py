@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 
 class CheckoutPage(BasePage):
@@ -19,10 +20,17 @@ class CheckoutPage(BasePage):
         self.send_keys(self.LAST_NAME_INPUT, last_name)
         self.send_keys(self.POSTAL_CODE_INPUT, postal_code)
         self.click(self.CONTINUE_BUTTON)
+        # Confirma la navegación al resumen de la orden por URL
+        self.wait.until(EC.url_contains("checkout-step-two.html"))
 
     def finish_checkout(self):
-        """Presiona el botón 'Finish' para confirmar la compra."""
+        """
+        Presiona el botón 'Finish' para confirmar la compra.
+        Verifica la navegación a la pantalla de confirmación por URL.
+        """
         self.click(self.FINISH_BUTTON)
+        # Confirma la navegación a la pantalla de confirmación por URL
+        self.wait.until(EC.url_contains("checkout-complete.html"))
 
     def get_completion_message(self):
         """Obtiene el texto del mensaje final de agradecimiento o confirmación de la orden."""

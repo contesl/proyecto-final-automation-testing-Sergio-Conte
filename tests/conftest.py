@@ -10,34 +10,38 @@ logger = setup_logger()
 def driver(request):
     """
     Fixture de Pytest que administra el ciclo de vida del navegador Selenium.
-    - Inicializa las opciones de Chrome.
+    - Inicializa las opciones de Chrome optimizadas para entornos de CI/CD.
     - Captura screenshots automáticamente al finalizar la ejecución.
     - Cierra el navegador de forma limpia.
     """
     logger.info("Iniciando instancia del navegador Chrome...")
     options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")       # Inicia la ventana maximizada
-    options.add_argument("--no-sandbox")            # Necesario para entornos de CI/CD o Docker
-    options.add_argument("--disable-dev-shm-usage") # Evita problemas de memoria compartida
-    options.add_argument("--headless=new")          # Ejecución sin ventana gráfica (ajustable según necesidad)
-    
+    options.add_argument("--start-maximized")
+    options.add_argument("--no-sandbox")             # Necesario para entornos de CI/CD o Docker
+    options.add_argument("--disable-dev-shm-usage")  # Evita problemas de memoria compartida
+    options.add_argument("--headless=new")            # Ejecución sin ventana gráfica
+    options.add_argument("--disable-gpu")             # Deshabilita GPU (innecesaria en CI/CD)
+    options.add_argument("--window-size=1920,1080")   # Resolución fija para headless
+    options.add_argument("--disable-extensions")      # Desactiva extensiones para mayor velocidad
+    options.add_argument("--disable-infobars")        # Elimina barras de información del navegador
+
     # Instancia el WebDriver de Chrome
     driver = webdriver.Chrome(options=options)
-    
+
     # Cede el control del driver a la función de prueba que lo invocó
     yield driver
 
     # --- Bloque de Teardown (Se ejecuta siempre al finalizar cada prueba) ---
     reports_dir = os.path.join(os.getcwd(), "reports")
     os.makedirs(reports_dir, exist_ok=True)
-    
+
     # Genera la captura de pantalla usando el nombre de la prueba
     test_name = request.node.name
     screenshot_path = os.path.join(reports_dir, f"{test_name}.png")
-    
+
     driver.save_screenshot(screenshot_path)
     logger.info(f"Captura de pantalla guardada en: {screenshot_path}")
-    
+
     # Cierra la sesión de Selenium
     driver.quit()
     logger.info("Navegador cerrado.")
