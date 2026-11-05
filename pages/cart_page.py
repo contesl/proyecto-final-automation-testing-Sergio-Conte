@@ -1,24 +1,31 @@
+"""
+cart_page.py
+------------
+Page Object de la pantalla del carrito de compras ("Your Cart").
+
+Permite leer el nombre del producto agregado y avanzar al checkout (pago).
+"""
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 
+
 class CartPage(BasePage):
-    """
-    Page Object que representa la pantalla del carrito de compras.
-    """
-    ITEM_NAME = (By.CLASS_NAME, "inventory_item_name")
-    CHECKOUT_BUTTON = (By.ID, "checkout")
+    """Representa el carrito de compras y sus acciones."""
+
+    # --- Localizadores de los elementos del carrito ---
+    ITEM_NAME = (By.CLASS_NAME, "inventory_item_name")  # Nombre del producto en el carrito
+    CHECKOUT_BUTTON = (By.ID, "checkout")                # Botón "Checkout"
 
     def get_item_name(self):
-        """Retorna el nombre del primer ítem que se encuentra dentro del carrito."""
+        """Devuelve el nombre del (primer) producto que está en el carrito."""
         return self.get_text(self.ITEM_NAME)
 
     def proceed_to_checkout(self):
         """
-        Presiona el botón 'Checkout' para iniciar el proceso de compra.
-        Verifica la navegación mediante la URL resultante, que es más confiable
-        que esperar visibilidad de elementos en apps React en entornos de CI/CD.
+        Presiona 'Checkout' y espera a que la URL cambie a 'checkout-step-one.html',
+        que es el formulario con los datos del comprador.
         """
         self.click(self.CHECKOUT_BUTTON)
-        # Confirma la navegación por URL en lugar de visibilidad de elementos
         self.wait.until(EC.url_contains("checkout-step-one.html"))

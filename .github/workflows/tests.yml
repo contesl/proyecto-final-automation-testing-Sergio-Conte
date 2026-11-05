@@ -1,5 +1,11 @@
+# Pipeline de Integración Continua (CI) con GitHub Actions.
+# Cada vez que se hace push o se abre un pull request hacia main, GitHub
+# levanta una máquina virtual, instala el proyecto, ejecuta todas las pruebas
+# y guarda los reportes para poder descargarlos.
+
 name: Automated Tests - UI & API
 
+# Cuándo se ejecuta el pipeline
 on:
   push:
     branches: [ main, master ]
@@ -8,35 +14,45 @@ on:
 
 jobs:
   test:
+    # Máquina virtual Linux provista por GitHub (ya trae Google Chrome instalado)
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Descarga el código del repositorio en la máquina virtual
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
+      # 2. Instala Python 3.13 y guarda en caché los paquetes para que las próximas ejecuciones sean más rápidas
       - name: Configurar Python 3.13
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
           cache: "pip"
 
+      # 3. Instala las dependencias listadas en requirements.txt
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # 4. Ejecuta las pruebas de API y genera su reporte HTML
       - name: Ejecutar pruebas de API
         run: |
           python -m pytest tests/test_api_reqres.py -v \
             --html=reports/reporte_api.html \
             --self-contained-html
 
+      # 5. Ejecuta las pruebas de UI (en modo headless) y genera su reporte HTML.
+      #    'if: always()' hace que se ejecuten aunque alguna prueba de API haya fallado
       - name: Ejecutar pruebas de UI
+        if: always()
         run: |
           python -m pytest tests/test_ui_saucedemo.py -v \
             --html=reports/reporte_ui.html \
             --self-contained-html
 
+      # 6. Sube la carpeta reports/ (reportes HTML, log y capturas) como artefacto descargable.
+      #    Se ejecuta siempre, incluso si hubo fallos, para poder analizarlos
       - name: Subir reportes y capturas como artefactos
         if: always()
         uses: actions/upload-artifact@v4

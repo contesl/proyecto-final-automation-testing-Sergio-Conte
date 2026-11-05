@@ -1,5 +1,6 @@
-selenium==4.49.0
-pytest==9.1.1
-pytest-html==4.2.0
-pytest-metadata==3.1.1
-requests==2.32.5
+# Dependencias del proyecto. Se instalan con: pip install -r requirements.txt
+selenium==4.49.0        # Automatización del navegador (pruebas de UI)
+pytest==9.1.1           # Framework para escribir y ejecutar los tests
+pytest-html==4.2.0      # Generación del reporte HTML
+pytest-metadata==3.1.1  # Datos del entorno que se muestran en el reporte HTML
+requests==2.32.5        # Envío de peticiones HTTP (pruebas de API)
