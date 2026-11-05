@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from pages.base_page import BasePage
+from pages.base_page import BasePage, logger
 
 class LoginPage(BasePage):
     """
@@ -18,6 +18,7 @@ class LoginPage(BasePage):
 
     def open(self):
         """Abre la URL de la página de inicio de sesión en el navegador."""
+        logger.info(f"Abriendo página de login: {self.url}")
         self.driver.get(self.url)
 
     def login(self, username, password):
@@ -25,6 +26,7 @@ class LoginPage(BasePage):
         Ejecuta la secuencia completa para iniciar sesión.
         Escribe usuario, contraseña y presiona el botón 'Login'.
         """
+        logger.info(f"Iniciando sesión con el usuario: '{username}'")
         self.send_keys(self.USERNAME_INPUT, username)
         self.send_keys(self.PASSWORD_INPUT, password)
         self.click(self.LOGIN_BUTTON)

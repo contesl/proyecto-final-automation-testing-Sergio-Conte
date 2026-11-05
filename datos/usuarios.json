@@ -1,15 +1,47 @@
 {
-   "usuario_valido": {
+  "usuarios_validos": [
+    {
+      "username": "standard_user",
+      "password": "secret_sauce"
+    },
+    {
+      "username": "problem_user",
+      "password": "secret_sauce"
+    }
+  ],
+
+  "usuarios_invalidos": [
+    {
+      "caso": "usuario_bloqueado",
+      "username": "locked_out_user",
+      "password": "secret_sauce",
+      "mensaje_error": "Epic sadface: Sorry, this user has been locked out."
+    },
+    {
+      "caso": "password_incorrecta",
+      "username": "standard_user",
+      "password": "clave_incorrecta",
+      "mensaje_error": "Epic sadface: Username and password do not match any user in this service"
+    },
+    {
+      "caso": "usuario_vacio",
+      "username": "",
+      "password": "secret_sauce",
+      "mensaje_error": "Epic sadface: Username is required"
+    },
+    {
+      "caso": "password_vacia",
+      "username": "standard_user",
+      "password": "",
+      "mensaje_error": "Epic sadface: Password is required"
+    }
+  ],
+
+  "usuario_checkout": {
     "username": "standard_user",
     "password": "secret_sauce"
   },
- 
-  "usuario_bloqueado": {
-    "username": "locked_out_user",
-    "password": "secret_sauce",
-    "mensaje_error": "Epic sadface: Sorry, this user has been locked out."
-  },
-  
+
   "datos_checkout": {
     "nombre": "Sergio",
     "apellido": "Conte",

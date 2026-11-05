@@ -19,8 +19,9 @@ def setup_logger(name="automation_logger"):
 
     # Evita agregar múltiples manejadores (handlers) si el logger ya fue configurado previamente
     if not logger.handlers:
-        # 1. Handler para guardar los logs en un archivo físico
-        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        # 1. Handler para guardar los logs en un archivo físico.
+        #    mode="w": cada ejecución empieza con un log limpio (no se mezclan corridas anteriores)
+        file_handler = logging.FileHandler(log_file, mode="w", encoding="utf-8")
         # Define el formato del log: Fecha/Hora - [Nivel] - Mensaje
         file_formatter = logging.Formatter("%(asctime)s - [%(levelname)s] - %(message)s")
         file_handler.setFormatter(file_formatter)

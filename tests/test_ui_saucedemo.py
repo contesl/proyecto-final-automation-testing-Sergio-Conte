@@ -1,5 +1,6 @@
 import json
 import os
+
 import pytest
 from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
@@ -9,25 +10,36 @@ from utils.logger import setup_logger
 
 logger = setup_logger()
 
+# Ruta al archivo de datos, calculada desde la ubicación de este archivo
+# (funciona sin importar desde qué carpeta se ejecute pytest)
+RUTA_DATOS = os.path.join(os.path.dirname(__file__), "..", "datos", "usuarios.json")
+
+
 def cargar_datos_usuarios():
-    """Función auxiliar para leer e importar el archivo externo JSON de datos de prueba."""
-    ruta_json = os.path.join(os.getcwd(), "datos", "usuarios.json")
-    with open(ruta_json, "r", encoding="utf-8") as f:
+    """Función auxiliar para leer el archivo externo JSON de datos de prueba."""
+    with open(RUTA_DATOS, "r", encoding="utf-8") as f:
         return json.load(f)
+
 
 # Carga la fuente externa de datos al inicializar el módulo de pruebas
 datos = cargar_datos_usuarios()
+usuario_checkout = datos["usuario_checkout"]
 
 
-def test_01_login_exitoso(driver):
-    """Caso de Prueba 1: Verificar el acceso exitoso al sistema usando un usuario válido."""
-    logger.info("Ejecutando Test 01: Login Exitoso")
+@pytest.mark.parametrize(
+    "usuario",
+    datos["usuarios_validos"],
+    ids=[u["username"] for u in datos["usuarios_validos"]],
+)
+def test_01_login_exitoso(driver, usuario):
+    """Caso de Prueba 1 (parametrizado): acceso exitoso con cada usuario válido del JSON."""
+    logger.info(f"Ejecutando Test 01: Login Exitoso con '{usuario['username']}'")
     login_page = LoginPage(driver)
     inventory_page = InventoryPage(driver)
 
     # Paso 1: Navegar a la página de login e ingresar credenciales válidas
     login_page.open()
-    login_page.login(datos["usuario_valido"]["username"], datos["usuario_valido"]["password"])
+    login_page.login(usuario["username"], usuario["password"])
 
     # Validación 1: Verificar que la URL actual cambió a la pantalla de inventario
     assert "/inventory.html" in driver.current_url
@@ -35,18 +47,29 @@ def test_01_login_exitoso(driver):
     assert inventory_page.get_title() == "Products"
 
 
-def test_02_login_fallido_escenario_negativo(driver):
-    """Caso de Prueba 2 (Escenario Negativo): Validar que un usuario bloqueado reciba el error correspondiente."""
-    logger.info("Ejecutando Test 02: Escenario Negativo Login")
+@pytest.mark.parametrize(
+    "usuario",
+    datos["usuarios_invalidos"],
+    ids=[u["caso"] for u in datos["usuarios_invalidos"]],
+)
+def test_02_login_fallido_escenario_negativo(driver, usuario):
+    """
+    Caso de Prueba 2 (Escenario Negativo, parametrizado): para cada combinación
+    inválida del JSON (usuario bloqueado, password incorrecta, campos vacíos)
+    se valida que no se ingrese al sistema y se muestre el error esperado.
+    """
+    logger.info(f"Ejecutando Test 02: Login fallido - caso '{usuario['caso']}'")
     login_page = LoginPage(driver)
 
-    # Paso 1: Intentar iniciar sesión con usuario bloqueado
+    # Paso 1: Intentar iniciar sesión con credenciales inválidas
     login_page.open()
-    login_page.login(datos["usuario_bloqueado"]["username"], datos["usuario_bloqueado"]["password"])
+    login_page.login(usuario["username"], usuario["password"])
 
-    # Validación: Verificar que el mensaje de error desplegado sea el esperado
+    # Validación 1: El mensaje de error desplegado debe ser el esperado
     mensaje_error = login_page.get_error_message()
-    assert datos["usuario_bloqueado"]["mensaje_error"] in mensaje_error
+    assert usuario["mensaje_error"] in mensaje_error
+    # Validación 2: No debe haber navegado al inventario
+    assert "/inventory.html" not in driver.current_url
 
 
 def test_03_verificacion_catalogo_e_interfaz(driver):
@@ -57,14 +80,15 @@ def test_03_verificacion_catalogo_e_interfaz(driver):
 
     # Iniciar sesión previa
     login_page.open()
-    login_page.login(datos["usuario_valido"]["username"], datos["usuario_valido"]["password"])
+    login_page.login(usuario_checkout["username"], usuario_checkout["password"])
 
     # Validación 1: Confirmar la visualización del menú y filtro de ordenamiento
     assert inventory_page.is_interface_loaded()
-    
-    # Validación 2: Verificar que el primer producto contenga nombre y precio válidos
+
+    # Validación 2: Verificar que el primer producto contenga nombre y un precio con formato $
     nombre, precio = inventory_page.get_first_product_info()
-    assert nombre != "" and precio != ""
+    assert nombre != ""
+    assert precio.startswith("$")
 
 
 def test_04_agregar_producto_al_carrito(driver):
@@ -75,7 +99,7 @@ def test_04_agregar_producto_al_carrito(driver):
     cart_page = CartPage(driver)
 
     login_page.open()
-    login_page.login(datos["usuario_valido"]["username"], datos["usuario_valido"]["password"])
+    login_page.login(usuario_checkout["username"], usuario_checkout["password"])
 
     # Captura el nombre del primer producto y lo agrega al carrito
     nombre_producto, _ = inventory_page.get_first_product_info()
@@ -83,7 +107,7 @@ def test_04_agregar_producto_al_carrito(driver):
 
     # Validación 1: El contador rojo del carrito debe incrementarse a 1
     assert inventory_page.get_cart_badge_count() == "1"
-    
+
     # Navega al carrito
     inventory_page.go_to_cart()
 
@@ -101,7 +125,7 @@ def test_05_flujo_completo_checkout(driver):
 
     # 1. Login
     login_page.open()
-    login_page.login(datos["usuario_valido"]["username"], datos["usuario_valido"]["password"])
+    login_page.login(usuario_checkout["username"], usuario_checkout["password"])
 
     # 2. Agregar ítem y avanzar al carrito
     inventory_page.add_first_product_to_cart()
@@ -112,9 +136,9 @@ def test_05_flujo_completo_checkout(driver):
     checkout_page.fill_checkout_info(
         datos["datos_checkout"]["nombre"],
         datos["datos_checkout"]["apellido"],
-        datos["datos_checkout"]["codigo_postal"]
+        datos["datos_checkout"]["codigo_postal"],
     )
-    
+
     # 4. Finalizar la orden
     checkout_page.finish_checkout()
 
